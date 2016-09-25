@@ -11,8 +11,8 @@
 
 #include "main.h"
 
-typedef enum { STARTING, RUNNING, ENDING  } states_t;
-typedef enum { FALSE, TRUE } bool_t;
+typedef enum { STARTING, RUNNING, ENDING } states_t;
+typedef struct car car_t;
 
 typedef struct car {
     char model[20];
@@ -29,72 +29,51 @@ typedef struct car {
 	
 car_t* Head = NULL;
 car_t* Tail = NULL;
-static bool_t isFirst = TRUE;
+static bool isFirst = true;
 	
 
 
-int car_new(char* model, int number_of_wheels, int number_of_seats, int number_of_doors)
+int car_new(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
+            unsigned int* number_of_doors)
 {
 	// get bytes from heap
 	// if not enough memory, reject
 	// add to car list
-	
-    printf("Head address: %u\n", (void*)Head);
     
 	car_t* new_car = (car_t*)malloc(sizeof(car_t));
-    printf("new_car address: %u\n", (void*)new_car);
-    printf("Head address: %u\n", (void*)Head);
 	
 	memcpy(&new_car->model, model, 20);
 	
-	new_car->number_of_wheels = number_of_wheels;
-	new_car->number_of_seats = number_of_seats;
-	new_car->number_of_doors = number_of_doors;
+	new_car->number_of_wheels = *number_of_wheels;
+	new_car->number_of_seats = *number_of_seats;
+	new_car->number_of_doors = *number_of_doors;
+    new_car->last = NULL;
+    new_car->next = NULL;
 	
-	if(isFirst == TRUE){
+	if(isFirst == true){
 	    Head = new_car;
         Tail = new_car;
-        isFirst = FALSE;
-        printf("\nNew head of chain\n");
-        printf("Head->model: %s\n", Head->model, "\n");
-        printf("Tail->model: %s\n", Tail->model, "\n");
-        printf("new_car_address: %u\n", (void*)new_car);
-        printf("Head address: %u\n", (void*)Head);
+        isFirst = false;
 	}
 	else {
-        printf("\n", Head->model, "\n");
-        
         Tail->next = new_car;
         new_car->last = Tail;
         Tail = new_car;
-        printf("\nNew tail of chain\n");
-        printf("Head->model: %s\n", Head->model, "\n");
-        printf("Tail->model: %s\n", Tail->model, "\n");
-        printf("Head->number_of_wheels: %u\n", Head->number_of_wheels);
-        printf("Tail->number_of_wheels: %u\n", Tail->number_of_wheels);
-        printf("new_car_address: %u\n", (void*)new_car);
-        printf("Head address: %u\n", (void*)Head);
 	}
 	return(0);
 }
 
-int car_del(car_t* car){
-    printf("In car_del()");
-    
+int car_del(unsigned int* db_num){
+    car_t* car = get_car(db_num);
     if(car == Head) {
-        printf("Old Head address: %u\n", (void*)Head);
         Head = car->next;
-        printf("New Head address: %u\n", (void*)Head);
         Head->last = NULL;
     }
     else if(car == Tail) {
-        printf("Old Tail address: %u\n", (void*)Tail);
         Tail = car->last;
-        printf("New Tail address: %u\n", (void*)Tail);
         Tail->next = NULL;
     }
     else {
-        printf("Not Head, not Tail");
         car->last->next = car->next;
         car->next->last = car->last;
     }
@@ -104,28 +83,70 @@ int car_del(car_t* car){
     return;
 }
 
-car_t* get_car(unsigned int* db_num) {
+static car_t* get_car(unsigned int* db_num) {
     car_t* db_entry;
     db_entry = Head;
     
-    printf("db_entry_address: %u\n", (void*)db_entry);
-    
     for(unsigned int i = 1; i < *db_num; i++) {
-        printf("db_entry_address: %u\n", (void*)db_entry);
         db_entry = db_entry->next;
     }
     
     return(db_entry);
 }
 
+int change_car_name(char* model, unsigned int* db_num){
+    memcpy(&get_car(db_num)->model, model, 20);
+    return(0);
+}
+
+int change_car_wheels(unsigned int* wheels, unsigned int* db_num){
+    get_car(db_num)->number_of_wheels = *wheels;;
+    return(0);
+}
+
+int change_car_doors(unsigned int* doors, unsigned int* db_num){
+    get_car(db_num)->number_of_doors = *doors;
+    return(0);
+}
+
+int change_car_seats(unsigned int* seats, unsigned int* db_num){
+    get_car(db_num)->number_of_seats = *seats;
+    return(0);
+}
+
+char* get_car_model(unsigned int* db_num){
+    return get_car(db_num)->model;
+}
+
+unsigned int get_car_wheels(unsigned int* db_num) {
+    return get_car(db_num)->number_of_wheels;
+}
+
+unsigned int get_car_seats(unsigned int* db_num) {
+    return get_car(db_num)->number_of_seats;
+}
+
+unsigned int get_car_doors(unsigned int* db_num) {
+    return get_car(db_num)->number_of_doors;
+}
+
+bool is_car_next_null(unsigned int* db_num) {
+    return get_car(db_num)->next == NULL ? true : false;
+}
+
+bool is_car_last_null(unsigned int* db_num) {
+    return get_car(db_num)->last == NULL ? true : false;
+}
 
 int main(void){
 	states_t state = STARTING;
 	states_t next_state;
+    bool isTail;
     char key;
     car_t* car;
     unsigned int num_db_entry;
     char model[20];
+    char filename[FILENAME_MAX];
     unsigned int number_of_wheels;
     unsigned int number_of_seats;
     unsigned int number_of_doors;
@@ -134,86 +155,144 @@ int main(void){
         
 	    switch (state) {
 	    case STARTING:
-	        printf("Loading database...\n");
-		    // load CSV
-		    // print some startup stuff
 		    next_state = RUNNING;
 	    break;
 	
 	    case RUNNING:
+            system("cls");
 	        printf("New car (n)\n");
 	        printf("Modify car (m)\n");
 	        printf("Delete car (d)\n");
             printf("Display car (x)\n");
+            printf("Save to file (s)\n");
             printf("Quit (q)\n");
 	        
 	        scanf("%c", &key);
+            while( getchar() != '\n');
 		
 		    switch (key) {
+            case 'n':
+                system("cls");
+                printf("Name the car model: ");
+                scanf("%s", model);
+                while( getchar() != '\n');
+                printf("Number of wheels: ");
+                scanf("%u", &number_of_wheels);
+                while( getchar() != '\n');
+                printf("Number of seats: ");
+                scanf("%u", &number_of_seats);
+                while( getchar() != '\n');
+                printf("Number of doors: ");
+                scanf("%u", &number_of_doors);
+                while( getchar() != '\n');
+                car_new(&model, &number_of_wheels, &number_of_seats, &number_of_doors);
+            break;
+            case 'm':
+                system("cls");
+                printf("Which entry do you want to modify?\n");
+                scanf("%u", &num_db_entry);
+                while( getchar() != '\n');
+                printf("So you want to modify %s?\n", get_car_model(&num_db_entry));
+                while( getchar() != '\n');
+                printf("Which variable do you want to modify?\n");
+                printf("(1) Model\n");
+                printf("(2) Number of wheels\n");
+                printf("(3) Number of seats\n");
+                printf("(4) Number of doors\n");
+                scanf("%u", &key);
                 
-		        case 'n':
-                    printf("Name the car model: ");
+                if(key == 1){
+                    printf("Please enter new name: ");
                     scanf("%s", model);
-                    printf("Number of wheels: ");
+                    while( getchar() != '\n');
+                    change_car_name(model, &num_db_entry);
+                    
+                }
+                else if(key == 2){
+                    printf("Please enter new number of wheels: ");
                     scanf("%u", &number_of_wheels);
-                    printf("Number of seats: ");
+                    while( getchar() != '\n');
+                    change_car_wheels(&number_of_wheels, &num_db_entry);
+                }
+                else if (key == 3){
+                    printf("Please enter new number of seats: ");
                     scanf("%u", &number_of_seats);
-                    printf("Number of doors: ");
+                    while( getchar() != '\n');
+                    change_car_seats(&number_of_seats, &num_db_entry); 
+                }
+                else if(key == 4){
+                    printf("Please enter new number of doors: ");
                     scanf("%u", &number_of_doors);
+                    while( getchar() != '\n');
+                    change_car_doors(&number_of_doors, &num_db_entry);
+                }
+            break;
+		
+            case 'd':
+                system("cls");
+                printf("Which entry do you want to delete?\n");
+                scanf("%u", &num_db_entry);
+                while( getchar() != '\n');
+                printf("Are you sure you want to delete %s?\n", get_car_model(&num_db_entry));
                 
-                    printf("Calling car_new");
-                    car_new(&model, number_of_wheels, number_of_seats, number_of_doors);
-    		    break;
-		
-		        case 'm':
-		            // select option to change
-		            // change it
-		        break;
-		
-		        case 'd':
-                    printf("Which entry do you want to delete?\n");
-                    scanf("%u", &num_db_entry);
-                    car = get_car(&num_db_entry);
-                    printf("Are you sure you want to delete %s?\n", car->model);
+                scanf("%c", &key);
+                while( getchar() != '\n');
                     
-                    scanf("%c", &key);
-                    scanf("%c", &key);
-                    
-                    switch(key){
-                        case 'y':
-                            printf("Deleting it\n");
-                            car_del(car);
-                        break;
-                        case 'n':
-                        ;
-                        default:
-                        ;
-                    }
+                switch(key){
+                case 'y':
+                    printf("Deleting it\n");
+                    car_del(&num_db_entry);
                 break;
+                case 'n':
+                    ;
+                default:
+                    ;
+                }
+            break;
+            case 'x':
+                system("cls");
+                printf("Which number entry in the database?\n");
+                scanf("%u", &num_db_entry);
+                while( getchar() != '\n');
+                    
+                printf("Model\t\t\tWheels\tSeats\tDoors\n");
+                printf("%s\t\t\t%u\t%u\t%u\n", get_car_model(&num_db_entry), get_car_wheels(&num_db_entry),
+                                            get_car_seats(&num_db_entry), get_car_doors(&num_db_entry));
+                printf("Press enter to return to menu\n");
+                while( getchar() != '\n');
+            break;
+            case 's':
+                // save changes
+                // record changes and print them to list?
+                // save new and changed entries
+                system("cls");
+                printf("Please enter filename: ");
+                scanf("%s", filename);
+                while( getchar() != '\n');
+                FILE *f = fopen(filename, "w");
+                if(f == NULL){
+                    printf("Error openening file\n");
+                    break;
+                }
+                fprintf(f, "Model\t\t\tWheels\tSeats\tDoors\n");
                 
-                case 'x':
-                    printf("Which number entry in the database?\n");
-                    scanf("%u", &num_db_entry);
-                    
+                num_db_entry = 1;
+                isTail = false;
+                while(!isTail){
                     car = get_car(&num_db_entry);
-                    
-                    printf("Model\tWheels\tSeats\tDoors\n");
-                    printf("%s\t%u\t%u\t%u\n", car->model, car->number_of_wheels,
-                                            car->number_of_seats, car->number_of_doors);
-                break;
-                    
-		        case 's':
-		            // save changes
-		            // record changes and print them to list?
-		            // save new and changed entries
-		        break;
-		
-		        case 'q':
-		            return(0);
-		        break;
-		
-		        default:
-		        break;
+                    fprintf(f, "%s\t\t\t\%u\t%u\t%u\n", get_car_model(&num_db_entry), get_car_wheels(&num_db_entry),
+                                            get_car_seats(&num_db_entry), get_car_doors(&num_db_entry));
+                    if(is_car_next_null(&num_db_entry)) { isTail = true; }
+                    num_db_entry++;
+                }
+
+                fclose(f);
+            break;
+            case 'q':
+                return(0);
+            break;
+            default:
+            break;
             }
 		break;
 	
@@ -222,7 +301,7 @@ int main(void){
 		}
 		
 		state = next_state;
-	}
+        }
 
 	return(-1);
 }
