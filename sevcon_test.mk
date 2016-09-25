@@ -62,7 +62,7 @@ AS       := C:/TDM-GCC-64/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/main.c$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.c$(ObjectSuffix) $(IntermediateDirectory)/car_database.c$(ObjectSuffix) 
 
 
 
@@ -100,6 +100,14 @@ $(IntermediateDirectory)/main.c$(DependSuffix): main.c
 
 $(IntermediateDirectory)/main.c$(PreprocessSuffix): main.c
 	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.c$(PreprocessSuffix)main.c
+
+$(IntermediateDirectory)/car_database.c$(ObjectSuffix): car_database.c $(IntermediateDirectory)/car_database.c$(DependSuffix)
+	$(CC) $(SourceSwitch) "C:/Users/mitch/Documents/sevcon_test/sevcon_test/car_database.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/car_database.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/car_database.c$(DependSuffix): car_database.c
+	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/car_database.c$(ObjectSuffix) -MF$(IntermediateDirectory)/car_database.c$(DependSuffix) -MM car_database.c
+
+$(IntermediateDirectory)/car_database.c$(PreprocessSuffix): car_database.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/car_database.c$(PreprocessSuffix)car_database.c
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

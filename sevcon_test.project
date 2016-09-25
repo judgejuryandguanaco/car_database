@@ -94,6 +94,7 @@
   </Settings>
   <VirtualDirectory Name="src">
     <File Name="main.c"/>
-    <File Name="main.h"/>
+    <File Name="car_database.c"/>
+    <File Name="car_database.h"/>
   </VirtualDirectory>
 </CodeLite_Project>
