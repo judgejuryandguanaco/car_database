@@ -8,27 +8,34 @@
  #ifndef CAR_DATABASE_H
     #define CAR_DATABASE_H
 
+    /* Other source files need stdbool to use this one */
     #include <stdbool.h>
+    
+  /* Preprocessor definintions */
+  #define MAX_CAR_NAME_LENGTH 20
   
   /* Public types */
   typedef struct car car_t;
   
   /* Public declarations */
-  int car_new(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
+  int newCar(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
               unsigned int* number_of_doors);
-  int car_del(unsigned int* db_num);
-  int change_car_name(char* model, unsigned int* db_num);
-  int change_car_wheels(unsigned int* wheels, unsigned int* db_num);
-  int change_car_doors(unsigned int* doors, unsigned int* db_num);
-  int change_car_seats(unsigned int* seats, unsigned int* db_num);
-  char* get_car_model(unsigned int* db_num);
-  unsigned int get_car_wheels(unsigned int* db_num);
-  unsigned int get_car_seats(unsigned int* db_num);
-  unsigned int get_car_doors(unsigned int* db_num);
-  bool is_car_next_null(unsigned int* db_num);
-  bool is_car_last_null(unsigned int* db_num);
+  int deleteCar(unsigned int* db_num);
+  int changeCarName(char* model, unsigned int* db_num);
+  int changeCarWheels(unsigned int* wheels, unsigned int* db_num);
+  int changeCarDoors(unsigned int* doors, unsigned int* db_num);
+  int changeCarSeats(unsigned int* seats, unsigned int* db_num);
+  char* getCarModel(unsigned int* db_num);
+  unsigned int getCarWheels(unsigned int* db_num);
+  unsigned int getCarSeats(unsigned int* db_num);
+  unsigned int getCarDoors(unsigned int* db_num);
+  bool areCarDoorsLocked(unsigned int* db_num);
+  bool areCarDoorsUnlocked(unsigned int* db_num);
+  bool isNextCarNull(unsigned int* db_num);
+  bool isLastCarNull(unsigned int* db_num);
+  int saveDatabase(char* filename);
   
   /* Private declarations */
-  static car_t* get_car(unsigned int* db_num);
+  static car_t* getCar(unsigned int* db_num);
  
  #endif
