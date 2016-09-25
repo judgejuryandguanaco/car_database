@@ -1,11 +1,21 @@
+/* main.c
+ *  Manage a database of cars
+ * 
+ *  Author: Mitchell Smith
+ *  Date: 2016-09-25
+ */ 
+
+
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "main.h"
 
 typedef enum { STARTING, RUNNING, ENDING  } states_t;
 typedef enum { FALSE, TRUE } bool_t;
 
 typedef struct car {
-	char model[20];
+    char model[20];
 	unsigned int number_of_wheels;
 	unsigned int number_of_seats;
 	unsigned int number_of_doors;
@@ -13,8 +23,8 @@ typedef struct car {
 	char* engine_size;
 	int efficiency;
 	
-	struct car* last;
-	struct car* next;
+	car_t* last;
+	car_t* next;
 } car_t;
 	
 car_t* Head = NULL;
@@ -187,7 +197,9 @@ int main(void){
                     
                     car = get_car(&num_db_entry);
                     
-                    printf("%s\n", car->model);
+                    printf("Model\tWheels\tSeats\tDoors\n");
+                    printf("%s\t%u\t%u\t%u\n", car->model, car->number_of_wheels,
+                                            car->number_of_seats, car->number_of_doors);
                 break;
                     
 		        case 's':
@@ -197,7 +209,7 @@ int main(void){
 		        break;
 		
 		        case 'q':
-		            // quit
+		            return(0);
 		        break;
 		
 		        default:
@@ -212,5 +224,5 @@ int main(void){
 		state = next_state;
 	}
 
-	return(0);
+	return(-1);
 }
