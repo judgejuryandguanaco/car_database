@@ -72,9 +72,16 @@ int main(void){
             
             case MODIFY_ENTRY:
                 system("cls");
-                printf("Which entry do you want to modify?\n");
+                printf("Which entry do you want to modify? (1 - %u)\n", getNumberOfEntries());
                 scanf("%u", &num_db_entry);
                 while( getchar() != '\n');
+                while(!isValidNumber(&num_db_entry)) {
+                    system("cls");
+                    printf("%u is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
+                    scanf("%u", &num_db_entry);
+                    while( getchar() != '\n');
+                }
+                
                 printf("So you want to modify %s?\n", getCarModel(&num_db_entry));
                 while( getchar() != '\n');
                 printf("Which variable do you want to modify?\n");
@@ -111,11 +118,11 @@ int main(void){
                         changeCarDoors(&number_of_doors, &num_db_entry);
                     break;
                     case LOCKS:
-                        if(areCarDoorsLocked){
+                        if(areCarDoorsLocked(&num_db_entry)){
                             printf("Unlocking car doors\n");
                             lockCarDoors(&num_db_entry);
                         }
-                        else if(areCarDoorsUnlocked) {
+                        else if(areCarDoorsUnlocked(&num_db_entry)) {
                             printf("Locking car doors\n");
                             unlockCarDoors(&num_db_entry);
                         }

@@ -12,23 +12,30 @@
 
 #include "car_database.h"
 
+/* Private declarations */
+static car_t* getCar(unsigned int* db_num);
+
+/* Custom types */
+
 typedef struct car {
     char model[MAX_CAR_NAME_LENGTH];
 	unsigned int number_of_wheels;
 	unsigned int number_of_seats;
 	unsigned int number_of_doors;
 	bool areCarDoorsLocked;
-	char* engine_size;
-	int efficiency;
 	
 	car_t* last;
 	car_t* next;
 } car_t;
+
+/* Private variables */
 	
 static car_t* Head = NULL;
 static car_t* Tail = NULL;
 static bool isFirst = true;
 static unsigned int num_db_entries = 0;
+
+/* Functions */
 
 int newCar(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
             unsigned int* number_of_doors)
@@ -96,37 +103,31 @@ static car_t* getCar(unsigned int* db_num) {
 }
 
 int changeCarName(char* model, unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     memcpy(&getCar(db_num)->model, model, MAX_CAR_NAME_LENGTH);
     return(0);
 }
 
 int changeCarWheels(unsigned int* wheels, unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     getCar(db_num)->number_of_wheels = *wheels;;
     return(0);
 }
 
 int changeCarDoors(unsigned int* doors, unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     getCar(db_num)->number_of_doors = *doors;
     return(0);
 }
 
 int changeCarSeats(unsigned int* seats, unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     getCar(db_num)->number_of_seats = *seats;
     return(0);
 }
 
 int lockCarDoors(unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     getCar(db_num)->areCarDoorsLocked = true;
     return(0);
 }
 
 int unlockCarDoors(unsigned int* db_num){
-    if( (*db_num <=0) || (*db_num > num_db_entries) ) { return(-1); }
     getCar(db_num)->areCarDoorsLocked = false;
     return(0);
 }
@@ -155,12 +156,30 @@ unsigned int getCarDoors(unsigned int* db_num) {
     return getCar(db_num)->number_of_doors;
 }
 
+unsigned int getNumberOfEntries(void){
+    return num_db_entries;
+}
+
 bool isNextCarNull(unsigned int* db_num) {
     return getCar(db_num)->next == NULL ? true : false;
 }
 
 bool isLastCarNull(unsigned int* db_num) {
     return getCar(db_num)->last == NULL ? true : false;
+}
+
+bool isValidNumber(unsigned int* db_num) {
+    /* Items in the database are numbered 1 to n
+       if *db_num is inside this range, it is a valid number
+        otherwise, invalid
+    */
+    if( (*db_num > 0) && (*db_num <= num_db_entries) ) { return(true); }
+    else { return(false); }
+}
+
+bool isNotValidNumber(unsigned int* db_num) {
+    if( (*db_num <= 0) && (*db_num > num_db_entries)) { return(true); }
+    else { return(false); }
 }
 
 int saveDatabase(char* filename){

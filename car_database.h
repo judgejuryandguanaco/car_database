@@ -25,6 +25,8 @@
   int changeCarWheels(unsigned int* wheels, unsigned int* db_num);
   int changeCarDoors(unsigned int* doors, unsigned int* db_num);
   int changeCarSeats(unsigned int* seats, unsigned int* db_num);
+  int lockCarDoors(unsigned int* db_num);
+  int unlockCarDoors(unsigned int* db_num);
   char* getCarModel(unsigned int* db_num);
   unsigned int getCarWheels(unsigned int* db_num);
   unsigned int getCarSeats(unsigned int* db_num);
@@ -34,8 +36,8 @@
   bool isNextCarNull(unsigned int* db_num);
   bool isLastCarNull(unsigned int* db_num);
   int saveDatabase(char* filename);
-  
-  /* Private declarations */
-  static car_t* getCar(unsigned int* db_num);
+  bool isValidNumber(unsigned int* db_num);
+  bool isNotValidNumber(unsigned int* db_num);
+  unsigned int getNumberOfEntries(void);
  
  #endif
