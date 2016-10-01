@@ -13,6 +13,7 @@
     
   /* Preprocessor definintions */
   #define MAX_CAR_NAME_LENGTH 20
+  #define MAX_LIST_NAME_LENGTH 20
   
   /* Public types */
   typedef struct car car_t;
@@ -39,5 +40,6 @@
   bool isValidNumber(unsigned int* db_num);
   bool isNotValidNumber(unsigned int* db_num);
   unsigned int getNumberOfEntries(void);
+  int loadDatabase (char* filename);
  
  #endif
