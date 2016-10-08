@@ -16,7 +16,6 @@
   #define MAX_LIST_NAME_LENGTH 20
   
   /* Public types */
-  typedef struct car car_t;
   
   /* Public declarations */
   int newCar(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
@@ -41,5 +40,7 @@
   bool isNotValidNumber(unsigned int* db_num);
   unsigned int getNumberOfEntries(void);
   int loadDatabase (char* filename);
+  void search_model(char* model);
+  void search_wheels(unsigned int* number_of_wheels);
  
  #endif

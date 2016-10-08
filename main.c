@@ -19,7 +19,7 @@
 typedef enum { STARTING, RUNNING, ENDING } states_t; /* Different states of main state machine */
 enum { NEW_ENTRY = 'n', MODIFY_ENTRY ='m', DELETE_ENTRY ='d', /* States of user menu */
                 VIEW_ENTRY ='v', SAVE_DATABASE = 's', QUIT = 'q',
-                LOAD_DATABASE = 'l' } menu;
+                LOAD_DATABASE = 'l', SEARCH_DATABASE = 'z'} menu;
 enum { MODEL = 1, WHEELS = 2, SEATS = 3, DOORS = 4, LOCKS = 5 } data; /* States of modify entry menu */
 enum { YES = 'y', NO = 'n', RETURN = 'r' } yes_no; /* States when user presented with yes/no choice; return for quitting */
 
@@ -67,6 +67,7 @@ int main(void){
             printf("View car (v)\n");
             printf("Save to file (s)\n");
             printf("Load file (l)\n");
+            printf("Search database (z)\n");
             printf("Quit (q)\n");
 	        
 	        scanf("%c", &key);
@@ -247,6 +248,39 @@ int main(void){
                 }
             break; // end of LOAD_DATABASE
             
+            case SEARCH_DATABASE:
+            system("cls");
+                printf("What do you want to search?\n");
+                printf("(1) Model\n");
+                printf("(2) Number of wheels\n");
+                printf("(3) Number of seats\n");
+                printf("(4) Number of doors\n");
+                printf("(5) Doors Locked/Unlocked\n");
+                scanf("%u", &key);
+                
+                switch(key){
+                    case MODEL:
+                        printf("What model do you want to search for?\n");
+                        scanf("%s", model);
+                        while( getchar() != '\n');
+                        search_model(model);
+                        while(getchar() != '\n');
+                    break;
+                    case WHEELS:
+                        printf("How many wheels?\n");
+                        scanf("%u", &number_of_wheels);
+                        while( getchar() != '\n');
+                        search_wheels(&number_of_wheels);
+                        while(getchar() != '\n');
+                    break;
+                    case SEATS:
+                    break;
+                    case DOORS:
+                    break;
+                    case LOCKS:
+                    break;
+                }
+            break;
             case QUIT:
                 next_state = ENDING;
             break; // end of QUIT

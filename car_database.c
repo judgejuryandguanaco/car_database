@@ -14,12 +14,20 @@
 
 #include "car_database.h"
 
+#define SEARCH_LIST_INITIAL_SIZE 5
+
+/* Type declarations */
+typedef struct car car_t;
+typedef struct database_result database_result_t;
+
 /* Private declarations */
 static car_t* getCar(unsigned int* db_num);
+static print_database_result(database_result_t* result);
 
 /* Custom types */
 
 typedef struct car {
+    //char* model;
     char model[MAX_CAR_NAME_LENGTH];
 	unsigned int number_of_wheels;
 	unsigned int number_of_seats;
@@ -30,13 +38,17 @@ typedef struct car {
 	car_t* next;
 } car_t;
 
+typedef struct database_result {
+      unsigned int* results;
+      unsigned int array_size;
+      unsigned int num_results;
+} database_result_t;
+
 /* Private variables */
 	
 static car_t* Head = NULL;
 static car_t* Tail = NULL;
 static unsigned int num_db_entries = 0;
-
-/* Functions */
 
 int newCar(char* model, unsigned int* number_of_wheels, unsigned int* number_of_seats, 
             unsigned int* number_of_doors)
@@ -46,7 +58,6 @@ int newCar(char* model, unsigned int* number_of_wheels, unsigned int* number_of_
      */
 	car_t* new_car = (car_t*)malloc(sizeof(car_t));
 	if(new_car == NULL) { return(-1); } /* If NULL something went wrong... */
-    
     
     /* Copy model name into new instance of car */
 	memcpy(new_car->model, model, MAX_CAR_NAME_LENGTH);
@@ -416,3 +427,87 @@ int loadDatabase (char* filename) {
     fclose(file);
     return(0);
 } /* End of loadDatabase */
+
+/* Search model returns the location in db of all
+ * entries matching string */
+void search_model(char* model) {
+    car_t* entry;
+    unsigned int db_num;
+    bool isNull;
+    
+    database_result_t list; /* dynamic array */
+    
+    list.results = (unsigned int*)malloc(sizeof(unsigned int)*SEARCH_LIST_INITIAL_SIZE);
+    list.num_results = 0;
+    list.array_size = SEARCH_LIST_INITIAL_SIZE;
+    
+    isNull = false;
+    db_num = 1;
+    entry = Head;
+    
+    while(isNull == false) {
+        if(strcmp(entry->model, model) == 0) {
+            if(list.results >= list.array_size) {
+                unsigned int* temp;
+                list.array_size *= list.array_size;
+                list.results = (unsigned int*)realloc(list.results, sizeof(unsigned int)*list.array_size);
+            }
+            list.results[list.num_results++] = db_num;
+        }
+        entry = entry->next;
+        db_num++;
+        if(entry == NULL) { isNull = true; }
+    }
+    
+    print_database_result(&list);
+    
+    free(list.results);
+    
+    return;
+}
+
+void search_wheels(unsigned int* number_of_wheels) {
+    car_t* entry;
+    unsigned int db_num;
+    bool isNull;
+    
+    database_result_t list; /* dynamic array */
+    7
+    list.results = (unsigned int*)malloc(sizeof(unsigned int)*SEARCH_LIST_INITIAL_SIZE);
+    list.num_results = 0;
+    list.array_size = SEARCH_LIST_INITIAL_SIZE;
+    
+    isNull = false;
+    db_num = 1;
+    entry = Head;
+    
+    while(isNull == false) {
+        if(entry->number_of_wheels == *number_of_wheels) {
+            if(list.results >= list.array_size) {
+                list.array_size *= list.array_size;
+                list.results = (unsigned int*)realloc(list.results, sizeof(unsigned int)*list.array_size);
+            }
+            list.results[list.num_results++] = db_num;
+        }
+        entry = entry->next;
+        db_num++;
+        if(entry == NULL) { isNull = true; }
+    }
+    
+    print_database_result(&list);
+    
+    free(list.results);
+    
+    return;
+}
+
+static int print_database_result(database_result_t* result) {
+    if(result == NULL) { return(-1); }
+    else {
+        printf("%u entries\n", result->num_results);
+        for(int i = 0; i < result->num_results; i++) {
+            printf("%u\n", result->results[i]);
+        }
+    }
+    return(0);
+}
