@@ -274,8 +274,18 @@ int main(void){
                         while(getchar() != '\n');
                     break;
                     case SEATS:
+                        printf("How many seats?\n");
+                        scanf("%u", &number_of_seats);
+                        while( getchar() != '\n');
+                        search_seats(&number_of_seats);
+                        while(getchar() != '\n');
                     break;
                     case DOORS:
+                        printf("How many doors?\n");
+                        scanf("%u", &number_of_doors);
+                        while( getchar() != '\n');
+                        search_wheels(&number_of_doors);
+                        while(getchar() != '\n');
                     break;
                     case LOCKS:
                     break;

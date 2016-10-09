@@ -42,5 +42,7 @@
   int loadDatabase (char* filename);
   void search_model(char* model);
   void search_wheels(unsigned int* number_of_wheels);
+  void search_doors(unsigned int* number_of_doors);
+  void search_seats(unsigned int* number_of_seats);
  
  #endif

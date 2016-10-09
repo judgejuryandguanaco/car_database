@@ -13,6 +13,8 @@
 #include <string.h>
 
 #include "car_database.h"
+#include "dynamic_array.h"
+
 
 #define SEARCH_LIST_INITIAL_SIZE 5
 
@@ -22,12 +24,10 @@ typedef struct database_result database_result_t;
 
 /* Private declarations */
 static car_t* getCar(unsigned int* db_num);
-static print_database_result(database_result_t* result);
 
 /* Custom types */
 
 typedef struct car {
-    //char* model;
     char model[MAX_CAR_NAME_LENGTH];
 	unsigned int number_of_wheels;
 	unsigned int number_of_seats;
@@ -132,11 +132,11 @@ int deleteCar(unsigned int* db_num){
     }
     
     /* Scrub data within fields */
-    memset(car->model, NULL, sizeof(car->model));
-    car->number_of_wheels = NULL;
-    car->number_of_seats = NULL;
-    car->number_of_doors = NULL;
-    car->areCarDoorsLocked = NULL;
+    memset(car->model, '\0', sizeof(car->model));
+    car->number_of_wheels = 0;
+    car->number_of_seats = 0;
+    car->number_of_doors = 0;
+    car->areCarDoorsLocked = 0;
     car->last = NULL;
     car->next = NULL;
     
@@ -381,7 +381,7 @@ int loadDatabase (char* filename) {
             isEndOfLine = false;
             
             /* Clear buffer by copying NULL into each element of array */
-            memset(buffer, NULL, sizeof(buffer));
+            memset(buffer, '\0', sizeof(buffer));
             
             while(!isEndOfLine){
                 
@@ -434,12 +434,9 @@ void search_model(char* model) {
     car_t* entry;
     unsigned int db_num;
     bool isNull;
+    d_uIntArray_t* results; /* dynamic array */
     
-    database_result_t list; /* dynamic array */
-    
-    list.results = (unsigned int*)malloc(sizeof(unsigned int)*SEARCH_LIST_INITIAL_SIZE);
-    list.num_results = 0;
-    list.array_size = SEARCH_LIST_INITIAL_SIZE;
+    results = new_d_uIntArray();
     
     isNull = false;
     db_num = 1;
@@ -447,21 +444,16 @@ void search_model(char* model) {
     
     while(isNull == false) {
         if(strcmp(entry->model, model) == 0) {
-            if(list.results >= list.array_size) {
-                unsigned int* temp;
-                list.array_size *= list.array_size;
-                list.results = (unsigned int*)realloc(list.results, sizeof(unsigned int)*list.array_size);
-            }
-            list.results[list.num_results++] = db_num;
+            append_d_uIntArray(results, &db_num);
         }
         entry = entry->next;
         db_num++;
         if(entry == NULL) { isNull = true; }
     }
     
-    print_database_result(&list);
+    print_d_uIntArray(results);
     
-    free(list.results);
+    del_d_uIntArray(results);
     
     return;
 }
@@ -470,44 +462,77 @@ void search_wheels(unsigned int* number_of_wheels) {
     car_t* entry;
     unsigned int db_num;
     bool isNull;
+    d_uIntArray_t* results;
     
-    database_result_t list; /* dynamic array */
-    7
-    list.results = (unsigned int*)malloc(sizeof(unsigned int)*SEARCH_LIST_INITIAL_SIZE);
-    list.num_results = 0;
-    list.array_size = SEARCH_LIST_INITIAL_SIZE;
-    
+    results = new_d_uIntArray();
     isNull = false;
     db_num = 1;
     entry = Head;
     
     while(isNull == false) {
         if(entry->number_of_wheels == *number_of_wheels) {
-            if(list.results >= list.array_size) {
-                list.array_size *= list.array_size;
-                list.results = (unsigned int*)realloc(list.results, sizeof(unsigned int)*list.array_size);
-            }
-            list.results[list.num_results++] = db_num;
+            append_d_uIntArray(results, &db_num);
         }
         entry = entry->next;
         db_num++;
         if(entry == NULL) { isNull = true; }
     }
     
-    print_database_result(&list);
-    
-    free(list.results);
+    print_d_uIntArray(results);
+    del_d_uIntArray(results);
     
     return;
 }
 
-static int print_database_result(database_result_t* result) {
-    if(result == NULL) { return(-1); }
-    else {
-        printf("%u entries\n", result->num_results);
-        for(int i = 0; i < result->num_results; i++) {
-            printf("%u\n", result->results[i]);
+void search_seats(unsigned int* number_of_seats) {
+    car_t* entry;
+    unsigned int db_num;
+    bool isNull;
+    
+    d_uIntArray_t* results;
+    
+    results = new_d_uIntArray();
+    isNull = false;
+    db_num = 1;
+    entry = Head;
+    
+    while(isNull == false) {
+        if(entry->number_of_seats == *number_of_seats) {
+            append_d_uIntArray(results, &db_num);
         }
+        entry = entry->next;
+        db_num++;
+        if(entry == NULL) { isNull = true; }
     }
-    return(0);
+    
+    print_d_uIntArray(results);
+    del_d_uIntArray(results);
+    
+    return;
+}
+
+void search_doors(unsigned int* number_of_doors) {
+    car_t* entry;
+    unsigned int db_num;
+    bool isNull;
+    d_uIntArray_t* results;
+    
+    results = new_d_uIntArray();
+    isNull = false;
+    db_num = 1;
+    entry = Head;
+    
+    while(isNull == false) {
+        if(entry->number_of_doors == *number_of_doors) {
+            append_d_uIntArray(results, &db_num);
+        }
+        entry = entry->next;
+        db_num++;
+        if(entry == NULL) { isNull = true; }
+    }
+    
+    print_d_uIntArray(results);
+    del_d_uIntArray(results);
+    
+    return;
 }
