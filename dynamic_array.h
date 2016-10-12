@@ -14,16 +14,12 @@
 /* Preprocessor definintions */
 
 /* Public types */
-typedef struct dynamic_uint_array {
-    unsigned int* data;
-    unsigned int available;
-    unsigned int used;
-} d_uIntArray_t;
+typedef struct dynamic_uint d_uIntArray_t;
 
 /* Public declarations */
-d_uIntArray_t* new_d_uIntArray(void);
-void del_d_uIntArray(d_uIntArray_t* array);
-void append_d_uIntArray(d_uIntArray_t* array, unsigned int* data);
-void print_d_uIntArray(d_uIntArray_t* array);
+d_uIntArray_t *new_d_uIntArray(void);
+void del_d_uIntArray(d_uIntArray_t *array);
+void append_d_uIntArray(d_uIntArray_t *array, unsigned int *data);
+void print_d_uIntArray(d_uIntArray_t *array);
 
 #endif
