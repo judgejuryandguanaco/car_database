@@ -5,7 +5,7 @@
  *  Date: 2016-10-09
  */
  
- #ifndef DYNAMIC_ARRAY_H
+#ifndef DYNAMIC_ARRAY_H
     #define DYNAMIC_ARRAY_H
 
 /* Other source files need stdbool to use this one */
@@ -15,11 +15,15 @@
 
 /* Public types */
 typedef struct dynamic_uint d_uIntArray_t;
+typedef struct dynamic_char_array dynamic_char_t;
 
 /* Public declarations */
 d_uIntArray_t *new_d_uIntArray(void);
 void del_d_uIntArray(d_uIntArray_t *array);
 void append_d_uIntArray(d_uIntArray_t *array, unsigned int *data);
 void print_d_uIntArray(d_uIntArray_t *array);
+
+//dynamic_char_t *new_dynamic_char_t(void);
+dynamic_char_t *new_dynamic_char_t(unsigned int available);
 
 #endif
