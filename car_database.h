@@ -18,22 +18,28 @@
     /* Public types */
   
     /* Public declarations */
-    int createCarDatabase(char* name);
-    int newCar(char *model, unsigned int *number_of_wheels, unsigned int *number_of_seats, 
-                unsigned int *number_of_doors);
-    int deleteCar(unsigned int *db_num);
-    int changeCarName(char *model, unsigned int *db_num);
-    int changeCarWheels(unsigned int *wheels, unsigned int *db_num);
-    int changeCarDoors(unsigned int *doors, unsigned int *db_num);
-    int changeCarSeats(unsigned int *seats, unsigned int *db_num);
-    int lockCarDoors(unsigned int *db_num);
-    int unlockCarDoors(unsigned int *db_num);
-    bool areCarDoorsLocked(unsigned int *db_num);
-    bool areCarDoorsUnlocked(unsigned int *db_num);
-    char* getCarModel(unsigned int *db_num);
-    unsigned int getCarWheels(unsigned int *db_num);
-    unsigned int getCarSeats(unsigned int *db_num);
-    unsigned int getCarDoors(unsigned int *db_num);
+    int createCarDatabase(const char* name);
+    int newCar(char const *model, const unsigned int *number_of_wheels, const unsigned int *number_of_seats, 
+            const unsigned int *number_of_doors, const bool *is_locked);
+    int deleteCar(const unsigned long *db_num);
+    int changeCarName(const char *model, const unsigned long *db_num);
+    int changeCarWheels(const unsigned int *wheels, const unsigned long *db_num);
+    int changeCarDoors(const unsigned int *doors, const unsigned long *db_num);
+    int changeCarSeats(const unsigned int *seats, const unsigned long *db_num);
+    int changeIsDoorLocked(const bool *is_locked, const unsigned long *db_num);
+    int lockCarDoors(const unsigned long *db_num);
+    int unlockCarDoors(const unsigned long *db_num);
+    bool areCarDoorsLocked(const unsigned long *db_num);
+    bool areCarDoorsUnlocked(const unsigned long *db_num);
+    char* getCarModel(const unsigned long *db_num);
+    unsigned int getCarWheels(const unsigned long *db_num);
+    unsigned int getCarSeats(const unsigned long *db_num);
+    unsigned int getCarDoors(const unsigned long *db_num);
     unsigned int getNumberOfEntries(void);
-    bool is_db_entry(unsigned int *db_num);
+    bool is_db_entry(const unsigned long *db_num);
+    void search_model(const char* model);
+    void search_wheels(const unsigned int *wheels);
+    void search_doors(const unsigned int *doors);
+    void search_seats(const unsigned int *seats);
+    int save(const char* filename);
 #endif

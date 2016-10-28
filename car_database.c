@@ -24,7 +24,7 @@
 /* Custom types */
 
 /* Private variables */
-static db_t* car_database = NULL;
+static list_t* car_database = NULL;
 
 static const unsigned int MODEL = 0;
 static const unsigned int NUMBER_OF_WHEELS = 1;
@@ -33,7 +33,7 @@ static const unsigned int NUMBER_OF_DOORS = 3;
 static const unsigned int IS_LOCKED = 4;
 static const unsigned int NUMBER_OF_VARIABLES = 5;
 
-int createCarDatabase(char* name)
+int createCarDatabase(const char* name)
 {
     char types[NUMBER_OF_VARIABLES];
     
@@ -55,33 +55,27 @@ int createCarDatabase(char* name)
     return(0);
 }
 
-int newCar(char *model, unsigned int *number_of_wheels, unsigned int *number_of_seats, 
-            unsigned int *number_of_doors)
+int newCar(const char *model, const unsigned int *number_of_wheels, const unsigned int *number_of_seats, 
+            const unsigned int *number_of_doors, const bool* is_locked)
 {
-    unsigned int num_node;
-    bool* bool_init = false;
+    unsigned long num_node;
     
     new_node(car_database);
-
-    printf("hooray\n");
-
     num_node = get_num_nodes(car_database);
-
-    add_PCHAR_data(car_database, num_node, MODEL, model);
-    add_UINT_data(car_database, num_node, NUMBER_OF_WHEELS, number_of_wheels);
-    add_UINT_data(car_database, num_node, NUMBER_OF_SEATS, number_of_seats);
-    add_UINT_data(car_database, num_node, NUMBER_OF_DOORS, number_of_doors);
-    
-//    add_data(car_database, num_node, IS_LOCKED, bool_init);
+    add_PCHAR_data(car_database, &num_node, &MODEL, model);
+    add_UINT_data(car_database, &num_node, &NUMBER_OF_WHEELS, number_of_wheels);
+    add_UINT_data(car_database, &num_node, &NUMBER_OF_SEATS, number_of_seats);
+    add_UINT_data(car_database, &num_node, &NUMBER_OF_DOORS, number_of_doors);
+    add_BOOL_data(car_database, &num_node, &IS_LOCKED, is_locked);
     
 	return(0);
 }
 
 /* Free memory of specified entry
  */
-int deleteCar(unsigned int *db_num)
+int deleteCar(const unsigned long *db_num)
 {
-    del_node(car_database, *db_num);
+    del_node(car_database, db_num);
     return(0);
 }
 
@@ -93,9 +87,9 @@ int deleteCar(unsigned int *db_num)
  * Change value of car.model
  * for specified entry
  */
-int changeCarName(char *model, unsigned int *db_num)
+int changeCarName(const char *model, const unsigned long *db_num)
 {
-    add_PCHAR_data(car_database, *db_num, MODEL, model);
+    add_PCHAR_data(car_database, db_num, &MODEL, model);
     return(0);
 }
 
@@ -103,9 +97,9 @@ int changeCarName(char *model, unsigned int *db_num)
  * Change value of car.number_of_wheels
  * for specified entry
  */
-int changeCarWheels(unsigned int *wheels, unsigned int *db_num) 
+int changeCarWheels(const unsigned int *wheels, const unsigned long *db_num) 
 {
-    add_UINT_data(car_database, *db_num, NUMBER_OF_WHEELS, *wheels);
+    add_UINT_data(car_database, db_num, &NUMBER_OF_WHEELS, wheels);
     return(0);
 }
 
@@ -113,9 +107,9 @@ int changeCarWheels(unsigned int *wheels, unsigned int *db_num)
  * Change value of car.number_of_doors
  * for specified entry
  */
-int changeCarDoors(unsigned int *doors, unsigned int *db_num)
+int changeCarDoors(const unsigned int *doors, const unsigned long *db_num)
 {
-    add_UINT_data(car_database, *db_num, NUMBER_OF_DOORS, *doors);
+    add_UINT_data(car_database, db_num, &NUMBER_OF_DOORS, doors);
     return(0);
 }
 
@@ -123,9 +117,15 @@ int changeCarDoors(unsigned int *doors, unsigned int *db_num)
  * Change value of car.number_of_seats
  * for specified entry
  */
-int changeCarSeats(unsigned int *seats, unsigned int *db_num)
+int changeCarSeats(const unsigned int *seats, const unsigned long *db_num)
 {
-    add_UINT_data(car_database, *db_num, NUMBER_OF_SEATS, *seats);
+    add_UINT_data(car_database, db_num, &NUMBER_OF_SEATS, seats);
+    return(0);
+}
+
+int changeIsDoorLocked(const bool *is_locked, const unsigned long *db_num)
+{
+    add_BOOL_data(car_database, db_num, &IS_LOCKED, is_locked);
     return(0);
 }
 
@@ -133,7 +133,7 @@ int changeCarSeats(unsigned int *seats, unsigned int *db_num)
  * Sets cars.areCarDoorsLocked to true
  * for specified entry
  */
-int lockCarDoors(unsigned int *db_num)
+int lockCarDoors(const unsigned long *db_num)
 {
     return(0);
 }
@@ -142,7 +142,7 @@ int lockCarDoors(unsigned int *db_num)
  * Sets car.areCarDoorsLocked to false
  * for specified entyr
  */
-int unlockCarDoors(unsigned int *db_num)
+int unlockCarDoors(const unsigned long *db_num)
 {
     return(0);
 }
@@ -151,9 +151,9 @@ int unlockCarDoors(unsigned int *db_num)
  * Returns value of car.areCarDoorsLocked
  * for specified entry
  */
-bool areCarDoorsLocked(unsigned int *db_num)
+bool areCarDoorsLocked(const unsigned long *db_num)
 {
-    return get_BOOL_data(car_database, *db_num, BOOL) ? true : false;
+    return get_BOOL_data(car_database, db_num, &IS_LOCKED) ? true : false;
 }
 
 /* areCarDoorsUnlocked
@@ -161,45 +161,45 @@ bool areCarDoorsLocked(unsigned int *db_num)
  * if car.areCarDoorsUnlocked is false, returns true
  * for specified entry
  */
-bool areCarDoorsUnlocked(unsigned int *db_num)
+bool areCarDoorsUnlocked(const unsigned long *db_num)
 {
-    return get_BOOL_data(car_database, *db_num, BOOL) ? false : true;
+    return get_BOOL_data(car_database, db_num, &IS_LOCKED) ? false : true;
 }
 
 /* getCarModel
  * Returns value of car.number_of_doors for specified
  * entry
  */
-char* getCarModel(unsigned int *db_num)
+char* getCarModel(const unsigned long *db_num)
 {
-    return get_PCHAR_data(car_database, *db_num, MODEL);
+    return get_PCHAR_data(car_database, db_num, &MODEL);
 }
 
 /* getCarWheels
  * Returns value of car.number_of_wheels for specified
  * entry
  */
-unsigned int getCarWheels(unsigned int *db_num)
+unsigned int getCarWheels(const unsigned long *db_num)
 {
-    return get_UINT_data(car_database, *db_num, NUMBER_OF_WHEELS);
+    return get_UINT_data(car_database, db_num, &NUMBER_OF_WHEELS);
 }
 
 /* getCarSeats
  * Returns value of car.number_of_seats for specified
  * entry
  */
-unsigned int getCarSeats(unsigned int *db_num)
+unsigned int getCarSeats(const unsigned long *db_num)
 {
-    return get_UINT_data(car_database, *db_num, NUMBER_OF_SEATS);
+    return get_UINT_data(car_database, db_num, &NUMBER_OF_SEATS);
 }
 
 /* getCarDoors
  * Returns value of car.number_of_doors for specified
  * entry
  */
-unsigned int getCarDoors(unsigned int *db_num)
+unsigned int getCarDoors(const unsigned long *db_num)
 {
-    return get_UINT_data(car_database, *db_num, NUMBER_OF_DOORS);
+    return get_UINT_data(car_database, db_num, &NUMBER_OF_DOORS);
 }
 
 /* getNumberOfEntries
@@ -210,55 +210,61 @@ unsigned int getNumberOfEntries(void)
     return get_num_nodes(car_database);
 }
 
-bool is_db_entry(unsigned int *db_num)
+bool is_db_entry(const unsigned long *db_num)
 {
     return((*db_num <= getNumberOfEntries()) ? true : false);
 }
 
-void search_model(char* model)
+void search_model(const char* model)
+{
+    unsigned long num_nodes = getNumberOfEntries();
+    
+    for (unsigned long i = 1; i <= num_nodes; i++) {
+        if (strcmp(model, getCarModel(&i)) == 0) {
+            printf("%lu", i);
+        }
+    }
+    return;
+}
+
+void search_wheels(const unsigned int *wheels)
 {
     unsigned int num_nodes = getNumberOfEntries();
     
-    for (unsigned int i = 1; i <= num_nodes; i++) {
-        if (strcmp(model, getCarModel(&i)) == 0) {
-            printf("%u", i);
-        }
-    }
-    return;
-}
-
-void search_wheels(unsigned int *wheels)
-{
-    unsigned int num_nodes = getNumberOfEntries;
-    
     for (unsigned long i = 1; i <= num_nodes; i++) {
         if (*wheels == getCarWheels(&i)) {
-            printf("%u", i);
+            printf("%lu", i);
         }
     }
     return;
 }
 
-void search_doors(unsigned int *doors)
+void search_doors(const unsigned int *doors)
 {
-    unsigned int num_nodes = getNumberOfEntries;
+    unsigned int num_nodes = getNumberOfEntries();
     
     for (unsigned long i = 1; i <= num_nodes; i++) {
         if (*doors == getCarDoors(&i)) {
-            printf("%u", i);
+            printf("%lu", i);
         }
     }
     return;
 }
 
-void search_seats(unsigned int *seats)
+void search_seats(const unsigned int *seats)
 {
-    unsigned int num_nodes = getNumberOfEntries;
+    unsigned int num_nodes = getNumberOfEntries();
     
     for (unsigned long i = 1; i <= num_nodes; i++) {
         if (*seats == getCarSeats(&i)) {
-            printf("%u", i);
+            printf("%lu", i);
         }
     }
     return;
+}
+
+int save(const char* filename)
+{
+    save_list(car_database, filename);
+    return(0);
 }

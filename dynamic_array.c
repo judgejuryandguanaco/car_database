@@ -18,6 +18,7 @@ struct dynamic_char_array {
 
 typedef struct dynamic_char_array dynamic_char_t;
 
+
 const unsigned int INT_ARRAY_DEFAULT_SIZE = 10;
 const unsigned int UCHAR_ARRAY_DEFAULT_SIZE  = 10;
 

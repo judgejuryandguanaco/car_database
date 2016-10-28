@@ -54,7 +54,7 @@ int main(void)
 	while (FOREVER) { 
 	    switch (state) {
 	    case STARTING:
-            createCarDatabase("Car database");
+            createCarDatabase("Car database\0");
 		    next_state = RUNNING;
             break;
 	    case RUNNING:
@@ -114,8 +114,8 @@ void running(void)
             view_entry();
             break;
         case SAVE_DATABASE:
-            //clear_screen;
-            //save_database();
+            clear_screen;
+            save_database();
             break;
         case LOAD_DATABASE:
             //clear_screen;
@@ -134,7 +134,8 @@ void new_entry(void)
     unsigned int number_of_wheels;
     unsigned int number_of_seats;
     unsigned int number_of_doors;
-    
+    bool is_locked = false;
+
     printf("Name the car model: ");
     scanf("%s", model);
     wait_for_input;
@@ -147,14 +148,14 @@ void new_entry(void)
     printf("Number of doors: ");
     scanf("%u", &number_of_doors);
     wait_for_input;
-    newCar(model, &number_of_wheels, &number_of_seats, &number_of_doors);
+    newCar(model, &number_of_wheels, &number_of_seats, &number_of_doors, &is_locked);
     
     return;
 }
 
 void modify_entry(void)
 {
-    unsigned int num_db_entry;
+    unsigned long num_db_entry;
     char model[MAX_CAR_NAME_LENGTH];
     unsigned int number_of_wheels;
     unsigned int number_of_seats;
@@ -162,12 +163,12 @@ void modify_entry(void)
     char key;
     
     printf("Which entry do you want to modify? (1 - %u)\n", getNumberOfEntries());
-    scanf("%u", &num_db_entry);
+    scanf("%lu", &num_db_entry);
     while (getchar() != '\n');
     while(!is_db_entry(&num_db_entry)) {
         clear_screen;
-        printf("%u is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
-        scanf("%u", &num_db_entry);
+        printf("%lu is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
+        scanf("%lu", &num_db_entry);
         wait_for_input;
     }
     printf("So you want to modify %s?\n", getCarModel(&num_db_entry));
@@ -220,16 +221,16 @@ void modify_entry(void)
 
 void delete_entry(void)
 {
-    unsigned int num_db_entry;
+    unsigned long num_db_entry;
     char key;
     
     printf("Which entry do you want to delete?\n");
-    scanf("%u", &num_db_entry);
+    scanf("%lu", &num_db_entry);
     wait_for_input;
     while (!is_db_entry(&num_db_entry)) {
         clear_screen;
-        printf("%u is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
-        scanf("%u", &num_db_entry);
+        printf("%lu is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
+        scanf("%lu", &num_db_entry);
         wait_for_input;
     }
     printf("Are you sure you want to delete %s? (y/n)\n", getCarModel(&num_db_entry));
@@ -239,12 +240,12 @@ void delete_entry(void)
     case YES:
         printf("Deleting %s\n\r", getCarModel(&num_db_entry));
         deleteCar(&num_db_entry);
-        scanf("%u", &num_db_entry);
+        scanf("%lu", &num_db_entry);
         wait_for_input;
         break;
     case NO:
         printf("Not deleting %s\n\r", getCarModel(&num_db_entry));
-        scanf("%u", &num_db_entry);
+        scanf("%lu", &num_db_entry);
         wait_for_input;
         break;
     default:
@@ -254,19 +255,19 @@ void delete_entry(void)
 
 void view_entry(void)
 {
-    unsigned int num_db_entry;
+    unsigned long num_db_entry;
 
     if(getNumberOfEntries <= 0) {
         printf("Create or load a database, and add at least 1 entry.\n");
     }
     else {
         printf("Which number entry in the database? (1 to %u)\n", getNumberOfEntries());
-        scanf("%u", &num_db_entry);
+        scanf("%lu", &num_db_entry);
         wait_for_input;
         while (!is_db_entry(&num_db_entry)) {
             clear_screen;
-            printf("%u is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
-            scanf("%u", &num_db_entry);
+            printf("%lu is invalid. Choose between 1 and %u\n", num_db_entry, getNumberOfEntries());
+            scanf("%lu", &num_db_entry);
             wait_for_input;
         }
         printf("Model\t\t\tWheels\tSeats\tDoors\tLocked?\n");
@@ -278,7 +279,6 @@ void view_entry(void)
     wait_for_input;
 }
 
-/*
 void save_database(void)
 {
     char filename[FILENAME_MAX];
@@ -286,7 +286,7 @@ void save_database(void)
     printf("Please enter filename: ");
     scanf("%s", filename);
     wait_for_input;
-    if (saveDatabase(filename) == 0) {
+    if (save(filename) == 0) {
         printf("Save complete!\n");
         printf("Press enter to return to menu\n");
         wait_for_input;
@@ -296,7 +296,6 @@ void save_database(void)
         wait_for_input;
     }
 }
-*/
 
 /*
 void load_database(void)
@@ -320,7 +319,7 @@ void load_database(void)
 
 void search_database(void)
 {
-    unsigned int key;
+    char key;
     char model[MAX_CAR_NAME_LENGTH];
     unsigned int number_of_wheels;
     unsigned int number_of_seats;
