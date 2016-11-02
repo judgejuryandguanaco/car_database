@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "car_database.h"
 
@@ -51,11 +52,18 @@ int main(void)
 	
     state = STARTING;
     
+    const unsigned int ONE = 1;
+    const unsigned int SIX = 6;
+    const bool ISTRUE = true;
+    const bool ISFALSE = false;
+    
 	while (FOREVER) { 
 	    switch (state) {
 	    case STARTING:
             createCarDatabase("Car database\0");
-		    next_state = RUNNING;
+            newCar("Harambe", &ONE, &ONE, &ONE, &ISFALSE);
+            newCar("Sanic", &SIX, &SIX, &SIX, &ISTRUE);
+        next_state = RUNNING;
             break;
 	    case RUNNING:
             running();
@@ -65,14 +73,14 @@ int main(void)
             next_state = ENDING;
             break;
         case ENDING:
-            return(0);
+            return 0;
             break; 
         default:
             break;   
 		}
 		state = next_state;
     }
-	return(-1);
+	return -1;
 }
 
 void running(void)
@@ -118,8 +126,8 @@ void running(void)
             save_database();
             break;
         case LOAD_DATABASE:
-            //clear_screen;
-            //load_database();
+            clear_screen;
+            load_database();
             break; 
         case QUIT:
             notQuit = true;
@@ -297,7 +305,6 @@ void save_database(void)
     }
 }
 
-/*
 void load_database(void)
 {
     char filename[FILENAME_MAX];
@@ -305,7 +312,7 @@ void load_database(void)
     printf("Please enter filename: ");
     scanf("%s", filename);
     wait_for_input;
-    if(loadDatabase(filename) == 0) {
+    if(load(filename) == 0) {
         printf("Load complete!\n\r");
         printf("Press enter to return to menu\n");
         wait_for_input;
@@ -315,7 +322,6 @@ void load_database(void)
         wait_for_input;
     }
 }
-*/
 
 void search_database(void)
 {

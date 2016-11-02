@@ -4,7 +4,7 @@
     #define LINKED_LIST_H
 
 /* Custom types */
-typedef struct header list_t;
+typedef struct list list_t;
 
 enum { CHAR, PCHAR, INT, UINT, UCHAR, BOOL, NONE } entry_data_types;
 
@@ -13,22 +13,21 @@ enum { TOO_WIDE = -2, TOO_NARROW = -3, TOO_LARGE = -4, IS_ZERO_OR_LESS = -5,
         IS_NONE = -6, BROKEN_LIST = -7, IS_NULL = -8 };
 
 /* Function prototypes */
-list_t* new_list(const char *name, const char types[5]);
-int new_node(list_t *list);
-void del_node(list_t *list, const unsigned long *num_node);
-int add_data(const list_t *list, const unsigned long *num_node, 
-			const unsigned int *num_data, const void* data);
+list_t* new_list(const char *name, const char *types, const char **data_name, const unsigned int *num_vars);
+unsigned long newnode(const unsigned long *numlist);
+void del_node(const unsigned long *numlist, const unsigned long *numnode);
+int add_data(const unsigned long *numlist, const unsigned long *numnode,
+             const unsigned long *numdata, void* data);
 int del_data(const list_t *list, const unsigned long *num_node, const unsigned int *num_data);
-int add_PCHAR_data(const list_t *list, const unsigned long *num_node, 
-                    const unsigned int *num_data, const char *data);
-int add_UINT_data(const list_t *list, const unsigned long *num_node, 
-				const unsigned int *num_data, const unsigned int *data);
-int add_BOOL_data(const list_t *list, const unsigned long *num_node, 
-                    const unsigned int *num_data, const bool *data);
 char* get_name(const list_t *list);
 unsigned long get_length(const list_t *list);
-char* get_PCHAR_data(const list_t* list, const unsigned long *num_node, const unsigned int *data_no);
-unsigned int get_UINT_data(const list_t* list, const unsigned long *num_node, const unsigned int *data_no);
-bool get_BOOL_data(const list_t* list, const unsigned long *num_node, const unsigned int *data_no);
-unsigned int get_num_nodes(const list_t* list);
+char* get_PCHAR_data(const unsigned long *numlist, const unsigned long *numnode,
+                     const unsigned int *numdata);
+unsigned int get_UINT_data(const unsigned long *numlist, const unsigned long *numnode,
+                           const unsigned int *numdata);
+bool get_BOOL_data(const unsigned long *numlist, const unsigned long *numnode,
+                   const unsigned int *numdata);
+unsigned int get_num_nodes(unsigned long *numlist);
+char *getdataname(unsigned long *numlist, unsigned long *datanum);
+char *get_data_type(list_t *list, unsigned int *data_num);
 #endif
